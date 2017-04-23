@@ -140,7 +140,7 @@ function calcMain() {
   var salt = document.getElementById("salt").value;
   var password = document.getElementById("password").value;
   var hostname = document.getElementById("host").value;
-  var pass_hash = hasher(salt, password, 1023);
+  var pass_hash = hasher(salt, password, 6000);
   var table = document.forms[0].char.value;
   // 䨺 and ꙮ. Anything you don't type.
   // Table is added here, otherwise passwords made of the same salt/pass/host
