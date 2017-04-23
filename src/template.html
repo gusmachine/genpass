@@ -141,9 +141,12 @@ function calcMain() {
   var password = document.getElementById("password").value;
   var hostname = document.getElementById("host").value;
   var pass_hash = hasher(salt, password, 1023);
-  var pass = password + "\u4A3A" + hostname; // 䨺.
-  var code2 = hasher(salt, pass, 6000);
   var table = document.forms[0].char.value;
+  // 䨺 and ꙮ. Anything you don't type.
+  // Table is added here, otherwise passwords made of the same salt/pass/host
+  // with different tables are too close to each other.
+  var pass = password + "\u4A3A" + hostname + "\uA66E" + table;
+  var code2 = hasher(salt, pass, 6000);
 
   updatePass(document.getElementById("passhash"),
       passCreator(pass_hash, "123456789abcdefghijkmnprstuvwxyz", kPassSize));
@@ -207,7 +210,8 @@ function clearAll() {
 </form>
 <div>
   <label for="visible" class="showlabel">
-    <input type="checkbox" name="visible" id="visible" onclick="javascript:changeShown('visible', 'passparent')"/>Show
+    <input type="checkbox" name="visible" id="visible" onclick="javascript:changeShown('visible', 'passparent')"/>
+    Show the output
   </label>
 </div>
 <div id="gauge1"></div>
@@ -215,12 +219,11 @@ function clearAll() {
 <h2>Usage</h2>
 <ol>
   <li>
-    Click "Show Salt" and input random characters (preferrably > 50 characters)
-    in the box. Then create a bookmark of this.
+    Click "Show Salt" and input random characters (preferrably &gt; 50 characters)
+    in the box.
   </li>
   <li>
-    Decide and type your "master" password. It will be the password "seed"
-    to generate a lot of password for you.
+    Type your password.
   </li>
   <li>
     Type the hostname for which you want to use the generated password,
@@ -228,12 +231,23 @@ function clearAll() {
   </li>
   <li>
     Click "Generate". A password is generated at the bottom boxes in invisible
-    color. Copy it. Or click "Show" to see it.
-  </li>
-  <li>
-    The password will disappear when the counter reaches 0. You can just
-    "generate" again to see it again.
+    color. Copy it. Or click "Show the output" to see it.
   </li>
 </ol>
+<h2>Tips</h2>
+<ul>
+  <li>
+    Bookmark this page after typing the salt string. The salt will be filled in
+    the bookmark.
+  </li>
+  <li>
+    The text next to the password is generated from your password and the salt.
+    Please check it to see your password is correct.
+  </li>
+  <li>
+    The password will disappear after 20 sec, when the counter reaches 0.
+    You can just "generate" again to show it again.
+  </li>
+</ul>
 </body>
 </html>
