@@ -16,7 +16,7 @@ TBA
 TBA
 
 ## TODOes
-- Update LISENCE.
+- Clarify what libraries are used.
 - Not-broken CSS.
 - Mobile-friendly UI.
 - Choose better password generation algorithm. Argon2?
