@@ -20,3 +20,5 @@ TBA
 - Not-broken CSS.
 - Mobile-friendly UI.
 - Choose better password generation algorithm. Argon2?
+- Generate salt string automatically.
+- Webpackify.
