@@ -122,11 +122,11 @@ function init() {
   addPassNode(document.getElementById("passparent"), kPassSize);
   addPassNode(document.getElementById("gauge1"), kPassSize);
   // TODO: move to template.
-  addChrChoice("Num", table0);
-  addChrChoice("alnum", table1);
-  addChrChoice("Cap", table2).checked = true;
-  addChrChoice("graph", table3);
-  addChrChoice("Kana", table4);
+  addChrChoice("0-9", table0);
+  addChrChoice("01ab", table1);
+  addChrChoice("01aB", table2).checked = true;
+  addChrChoice("01aB%", table3);
+  addChrChoice("あ", table4);
   setInterval("interval()", 1000);
 }
 
