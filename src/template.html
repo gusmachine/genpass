@@ -142,10 +142,10 @@ function calcMain() {
   var hostname = document.getElementById("host").value;
   var pass_hash = hasher(salt, password, 6000);
   var table = document.forms[0].char.value;
-  // 䨺 and ꙮ. Anything you don't type.
-  // Table is added here, otherwise passwords made of the same salt/pass/host
-  // with different tables are too close to each other.
-  var pass = password + "\u4A3A" + hostname + "\uA66E" + table;
+  // FF and 䨺 and ꙮ. Anything you don't type.
+  // The character table is also added here. Otherwise passwords made of the
+  // same salt/pass/host with different tables are too close to each other.
+  var pass = password + "\f\u4A3A" + hostname + "\f\uA66E" + table;
   var code2 = hasher(salt, pass, 6000);
 
   updatePass(document.getElementById("passhash"),
