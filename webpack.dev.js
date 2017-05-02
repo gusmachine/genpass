@@ -13,7 +13,7 @@ module.exports = {
       filename: 'genpass.html',
       template: 'src/template.html',
       inject: false,
-    }),
+    })
   ],
   devtool: "cheap-module-source-map",
 
