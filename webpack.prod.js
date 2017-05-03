@@ -23,7 +23,9 @@ module.exports = {
       minimize: true,
       sourceMap: false,
       compressor: {
-        warnings: false
+        dead_code: true,
+        unused: true,
+        warnings: true,
       },
       output: {
         comments: false
