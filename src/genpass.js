@@ -2,17 +2,9 @@ const sjcl = require('./sjcl');
 // Converts a bytearray ba into (bits)-bit int array.
 function cutByBits(ba, bits) {
   let result = [];
-  for (let i = 0; i + bits < ba.length * 8; i += bits) {
-    const pos = Math.floor(i / 8);
-    const rem = i - pos * 8;
-    // take 16 bits from ba[pos]
-    let val = ba[pos] << 8;
-    if (pos + 1 < ba.length) {
-      val |= ba[pos + 1];
-    }
-    // take rem ~ rem+bits bits from val.
-    val >>= 16 - (rem + bits);
-    val &= (1<<bits) - 1;
+  const len = sjcl.bitArray.bitLength(ba);
+  for (let i = 0; i + bits < len; i += bits) {
+    const val = sjcl.bitArray.extract(ba, i, bits);
     result.push(val);
   }
   return result;
@@ -34,8 +26,7 @@ function passCreator(ba, charset, length) {
 }
 
 function hasher(salt, pass, iterations) {
-  return sjcl.codec.bytes.fromBits(
-      sjcl.misc.pbkdf2(pass, salt, iterations, 1024));
+  return sjcl.misc.pbkdf2(pass, salt, iterations, 1024);
 }
 
 function addPassNode(base, size) {
