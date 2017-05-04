@@ -48,53 +48,57 @@ function addPassNode(base, size) {
 }
 
 function updatePass(base, code) {
-  var nodes = base.querySelectorAll('.el');
-  for (var i = 0; nodes[i]; i++) {
+  let nodes = base.querySelectorAll('.el');
+  for (let i = 0; nodes[i]; i++) {
     nodes[i].firstChild.data = code.charAt(i);
   }
 }
 
 function addChrChoice(title, table) {
-  var base = document.getElementById('chrchoice');
-  var radio = base.appendChild(document.createElement('input'));
+  let base = document.getElementById('chrchoice');
+  let radio = base.appendChild(document.createElement('input'));
   radio.type = 'radio';
   radio.name = 'char';
   radio.value = table;
-  var id = 'r-' + table;
+  const id = 'r-' + table;
   radio.id = id;
-  var el = base.appendChild(document.createElement('label'));
+  let el = base.appendChild(document.createElement('label'));
   el.appendChild(document.createTextNode(title));
   el.htmlFor = id;
   return radio;
 }
 
-var kPassSize = 30;
+const kPassSize = 30;
 
 function init() {
   document.getElementById('salt').addEventListener('keyup', upSalt);
   document.getElementById('showsalt').addEventListener(
-    'click', function(){changeShown('showsalt', 'salt');});
+    'click', function() {
+      changeShown('showsalt', 'salt');
+    });
   document.getElementById('clear').addEventListener('click', clearAllNow);
   document.getElementById('submit').addEventListener('click', calcMain);
   document.getElementById('fm').addEventListener('submit', calcMain);
   document.getElementById('visible').addEventListener(
-    'click', function(){changeShown('visible', 'passparent');});
+    'click', function() {
+      changeShown('visible', 'passparent');
+    });
 
-  var s='';
-  location.hash.substr(1).split('&').forEach(function(part){
-    var pair = part.split('=');
+  let s = '';
+  location.hash.substr(1).split('&').forEach(function(part) {
+    const pair = part.split('=');
     if (pair[0] == 's') {
       s = decodeURIComponent(pair[1]);
     }
   });
   document.getElementById('salt').value = s;
 
-  var table0 = '0123456789';
-  var table1 = '123456789abcdefghijkmnprstuvwxyz';
-  var table2 = table1 + 'ABCDEFGHJKLMNPQRSTUVWXYZ123456789';
-  var keys = '!#$%&()*+-/<=>?@[]^';
-  var table3 = table2 + keys + keys;
-  var table4 = 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんー';
+  const table0 = '0123456789';
+  const table1 = '123456789abcdefghijkmnprstuvwxyz';
+  const table2 = table1 + 'ABCDEFGHJKLMNPQRSTUVWXYZ123456789';
+  const keys = '!#$%&()*+-/<=>?@[]^';
+  const table3 = table2 + keys + keys;
+  const table4 = 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんー';
   addPassNode(document.getElementById('passhash'), 3);
   addPassNode(document.getElementById('passparent'), kPassSize);
   addPassNode(document.getElementById('gauge1'), kPassSize);
@@ -108,12 +112,12 @@ function init() {
 }
 
 function upSalt() {
-  var s = document.getElementById('salt').value;
+  const s = document.getElementById('salt').value;
   location.replace('#s=' + encodeURIComponent(s));
 }
 
-var resetCounter = 0;
-var resetInitial = 20;
+let resetCounter = 0;
+const resetInitial = 20;
 
 function interval() {
   if (resetCounter > 0) {
@@ -126,19 +130,19 @@ function interval() {
 }
 
 function calcMain() {
-  var salt = document.getElementById('salt').value;
-  var password = document.getElementById('password').value;
-  var hostname = document.getElementById('host').value;
-  var pass_hash = hasher(salt, password, 6000);
-  var table = document.forms[0].char.value;
+  const salt = document.getElementById('salt').value;
+  const password = document.getElementById('password').value;
+  const hostname = document.getElementById('host').value;
+  const passHash = hasher(salt, password, 6000);
+  const table = document.forms[0].char.value;
   // FF and 䨺 and ꙮ. Anything you don't type.
   // The character table is also added here. Otherwise passwords made of the
   // same salt/pass/host with different tables are too close to each other.
-  var pass = password + '\f\u4A3A' + hostname + '\f\uA66E' + table;
-  var code2 = hasher(salt, pass, 6000);
+  const pass = password + '\f\u4A3A' + hostname + '\f\uA66E' + table;
+  const code2 = hasher(salt, pass, 6000);
 
   updatePass(document.getElementById('passhash'),
-      passCreator(pass_hash, '123456789abcdefghijkmnprstuvwxyz', kPassSize));
+      passCreator(passHash, '123456789abcdefghijkmnprstuvwxyz', kPassSize));
   updatePass(document.getElementById('passparent'),
       passCreator(code2, table, kPassSize));
 
@@ -147,9 +151,9 @@ function calcMain() {
 }
 
 function changeShown(buttonName, targetName) {
-  var cl = document.getElementById(targetName).classList;
-  var checkbox = document.getElementById(buttonName);
-  var parentLabel = checkbox.parentElement.classList;
+  let cl = document.getElementById(targetName).classList;
+  const checkbox = document.getElementById(buttonName);
+  let parentLabel = checkbox.parentElement.classList;
   if (checkbox.checked) {
     cl.remove('hidden');
     parentLabel.add('on');
