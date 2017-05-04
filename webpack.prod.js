@@ -6,7 +6,7 @@ module.exports = {
   entry: './src/genpass.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'index_bundle.js'
+    filename: 'index_bundle.js',
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -17,7 +17,7 @@ module.exports = {
         collapseWhitespace: true,
         minifyCSS: true,
         removeComments: true,
-      }
+      },
     }),
     new webpack.optimize.UglifyJsPlugin({
       minimize: true,
@@ -28,9 +28,9 @@ module.exports = {
         warnings: true,
       },
       output: {
-        comments: false
-      }
-    })
+        comments: false,
+      },
+    }),
   ],
   module: {
     rules: [
@@ -40,10 +40,10 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['env']
-          }
-        }
-      }
-    ]
-  }
-}
+            presets: ['env'],
+          },
+        },
+      },
+    ],
+  },
+};
