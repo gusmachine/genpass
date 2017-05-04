@@ -1,5 +1,4 @@
-// var sjcl = require('sjcl');
-import sjcl from './sjcl.js';
+var sjcl = require('./sjcl');
 // Converts a bytearray ba into (bits)-bit int array.
 function cutByBits(ba, bits) {
   var result = [];
