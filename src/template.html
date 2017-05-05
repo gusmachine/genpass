@@ -87,6 +87,9 @@ label.on {background-color: #8ff}
     You can just "generate" again to show it again.
   </li>
 </ul>
+<div>
+  Source code: <a href="https://github.com/gusmachine/genpass">https://github.com/gusmachine/genpass</a>
+</div>
 <% _.forEach(htmlWebpackPlugin.files.js, function(jsFile) { %><script><%=  compilation.assets[jsFile.substr(htmlWebpackPlugin.files.publicPath.length)].source() %></script><% }); %>
 </body>
 </html>

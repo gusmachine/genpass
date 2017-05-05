@@ -1,9 +1,9 @@
 # genpass
 A password generator implemented in JS/HTML.
-[You can try it on github.io](https://gusmachine.github.io/genpass/genpass.html).
+[You can try this on github.io](https://gusmachine.github.io/genpass/genpass.html).
 
 ## Features
-- Generates a password for each host.
+- Generates host-specific passwords from a master password.
 - No network connection is needed. Everything is calculated within the browser.
 - Secure password generation using pbkdf2-sha256 with 6,000 iterations.
 - Several character sets to choose from to meet the password requirements.
@@ -26,4 +26,3 @@ TBA
 - Better UI than copy-paste.
 - Choose better password generation algorithm. Argon2?
 - Generate salt string automatically.
-- Webpackify.
