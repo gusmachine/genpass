@@ -1,5 +1,10 @@
 import {bitArray, misc} from './sjcl.js';
-// Converts a bytearray ba into (bits)-bit int array.
+/**
+ * Cuts a bitArray into an array of n-bit integers.
+ * @param {bitArray} ba the bitArray to cut.
+ * @param {number} bits the number of bits used for each result element.
+ * @return {Array<number>}
+ */
 function cutByBits(ba, bits) {
   let result = [];
   const len = bitArray.bitLength(ba);
@@ -10,9 +15,16 @@ function cutByBits(ba, bits) {
   return result;
 }
 
-// Converts a bytearray into a passcode of specific length consisting of
-// charset.
-// This needs ba * log2(charset.length) * 2 bits of bytearray on average.
+/**
+ * Converts a bitArray into a passcode of specific length consisting of the
+ * given charset. This needs length * log2(charset.length) * 2 bits of
+ * bytearray on average. The result can be shorter than |length| in case if
+ * |ba.length| is not sufficient.
+ * @param {bitArray} ba the bitArray to convert.
+ * @param {string} charset the list of characters used for the result.
+ * @param {number} length the expected output string size.
+ * @return {string}
+ */
 function passCreator(ba, charset, length) {
   const sigma = charset.length;
   const bitsArray = cutByBits(ba, Math.ceil(Math.log2(sigma)));
@@ -25,10 +37,21 @@ function passCreator(ba, charset, length) {
   return result;
 }
 
-function hasher(salt, pass, iterations) {
-  return misc.pbkdf2(pass, salt, iterations, 1024);
+/**
+ * The hash function used for this program.
+ * @param {string} salt the salt string.
+ * @param {string} pass the password.
+ * @return {bitArray} hash result bitArray. Use passCreator to take string.
+ */
+function hasher(salt, pass) {
+  return misc.pbkdf2(pass, salt, 6000, 1024);
 }
 
+/**
+ * Adds DOM nodes for password texts.
+ * @param {Element} base the parent DOM element of the password nodes.
+ * @param {number} size password length.
+ */
 function addPassNode(base, size) {
   let coder = base.appendChild(document.createElement('span'));
   for (let i = 0; i < size; i++) {
@@ -38,6 +61,11 @@ function addPassNode(base, size) {
   }
 }
 
+/**
+ * Updates the password nodes with the given code.
+ * @param {Element} base the parent DOM element of the password nodes.
+ * @param {string} code the new password code.
+ */
 function updatePass(base, code) {
   let nodes = base.querySelectorAll('.el');
   for (let i = 0; nodes[i]; i++) {
@@ -45,6 +73,12 @@ function updatePass(base, code) {
   }
 }
 
+/**
+ * Adds character set selection node in the form.
+ * @param {string} title the title of th character set.
+ * @param {string} table the character set table.
+ * @return {Element} the added radio input element for the character set.
+ */
 function addChrChoice(title, table) {
   let base = document.getElementById('chrchoice');
   let radio = base.appendChild(document.createElement('input'));
@@ -61,6 +95,9 @@ function addChrChoice(title, table) {
 
 const kPassSize = 30;
 
+/**
+ * body.onload equivalent.
+ */
 function init() {
   document.getElementById('salt').addEventListener('keyup', upSalt);
   document.getElementById('showsalt').addEventListener(
@@ -102,6 +139,9 @@ function init() {
   setInterval(interval, 1000);
 }
 
+/**
+ * Updates URL path by adding the salt string. Called when the salt is updated.
+ */
 function upSalt() {
   const s = document.getElementById('salt').value;
   location.replace('#s=' + encodeURIComponent(s));
@@ -110,27 +150,36 @@ function upSalt() {
 let resetCounter = 0;
 const resetInitial = 20;
 
+/**
+ * Does countdown and resets password when the timer reaches 0. Called by
+ * setInterval when the password is shown.
+ */
 function interval() {
   if (resetCounter > 0) {
     resetCounter -= 1;
     if (resetCounter == 0) {
-      clearAll();
+      updatePass(document.getElementById('passparent'), '*'.repeat(kPassSize));
     }
     document.getElementById('counter').firstChild.data = resetCounter;
   }
 }
 
+/**
+ * The main function to calculate the password. Called when "generate" is
+ * clicked.
+ * @return {boolean} false to stop event propagation.
+ */
 function calcMain() {
   const salt = document.getElementById('salt').value;
   const password = document.getElementById('password').value;
   const hostname = document.getElementById('host').value;
-  const passHash = hasher(salt, password, 6000);
+  const passHash = hasher(salt, password);
   const table = document.forms[0].char.value;
   // FF and 䨺 and ꙮ. Anything you don't type.
   // The character table is also added here. Otherwise passwords made of the
   // same salt/pass/host with different tables are too close to each other.
   const pass = password + '\f\u4A3A' + hostname + '\f\uA66E' + table;
-  const code2 = hasher(salt, pass, 6000);
+  const code2 = hasher(salt, pass);
 
   updatePass(document.getElementById('passhash'),
       passCreator(passHash, '123456789abcdefghijkmnprstuvwxyz', kPassSize));
@@ -141,6 +190,13 @@ function calcMain() {
   return false;
 }
 
+/**
+ * Changes hidden/shown status of a specific node based on a checkbox value.
+ * Called when the checkbox is clicked.
+ * @param {string} buttonName the id of the checkbox element.
+ * @param {string} targetName the id of the element that is hidden/shown by the
+ * checkbox.
+ */
 function changeShown(buttonName, targetName) {
   let cl = document.getElementById(targetName).classList;
   const checkbox = document.getElementById(buttonName);
@@ -154,13 +210,12 @@ function changeShown(buttonName, targetName) {
   }
 }
 
+/**
+ * Hides/erases the password. Called by "clear" button clicks.
+ */
 function clearAllNow() {
   resetCounter = 1;
   interval();
-}
-
-function clearAll() {
-  updatePass(document.getElementById('passparent'), '*'.repeat(kPassSize));
 }
 
 init();
