@@ -4,15 +4,50 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0" />
 <style>
-#fm>div>label, #fm .cap {min-width: 80px; display: inline-block; text-align:right; padding-right: 4px}
-#chrchoice label {cursor: pointer; user-select: none; border-radius: 8px; padding: 4px; margin: 4px; background-color: #edeff1}
+#fm>div>label, #fm .cap {
+  min-width: 80px;
+  display: inline-block;
+  text-align:right;
+  padding-right: 4px
+}
+
+#chrchoice label {
+  display: inline-block;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 8px;
+  padding: 4px;
+  margin: 4px;
+  background-color: #edeff1;
+}
 #chrchoice input[type=radio] {display: none}
 #chrchoice input[type=radio]:checked + label {background-color: #8ff}
-#fm input[type=button] {border-radius: 8px; margin: 10px}
+
+#fm input[type=button] {
+  border-radius: 8px;
+  margin: 10px;
+}
+
+label.showlabel {
+  cursor:pointer;
+  user-select: none;
+  border-radius: 8px;
+  padding: 4px;
+  background-color: #edeff1;
+}
 #salt.hidden {visibility: hidden}
-label.showlabel {cursor:pointer; user-select: none; border-radius: 8px; padding: 4px; background-color: #edeff1}
 label.on {background-color: #8ff}
-.el { display: inline-block; min-width: 22px; min-height: 22px; font-family: 'Courier New', monospace, sans-serif; margin: 1px; border: dotted 1px black; padding: 1px; text-align: center}
+
+.el {
+  display: inline-block;
+  min-width: 22px;
+  min-height: 22px;
+  font-family: 'Courier New', monospace, sans-serif;
+  margin: 1px;
+  border: dotted 1px black;
+  padding: 1px;
+  text-align: center;
+}
 .el:nth-child(5n) {font-weight: bold; background-color: #8ff}
 .hidden .el {color:transparent}
 </style>
@@ -75,15 +110,15 @@ label.on {background-color: #8ff}
 <h2>Tips</h2>
 <ul>
   <li>
-    Bookmark this page after typing the salt string. The salt will be filled in
-    the bookmark.
+    Bookmark this page after typing the salt characters. The salt will be
+    filled in the bookmark.
   </li>
   <li>
     The text next to the password is generated from your password and the salt.
     Please check it to see your password is correct.
   </li>
   <li>
-    The password will disappear after 20 sec, when the counter reaches 0.
+    The password disappears in 20 sec, when the counter reaches 0.
     You can just "generate" again to show it again.
   </li>
 </ul>
