@@ -77,7 +77,7 @@ function updatePass(base, code) {
  * Adds radiobutton + label control under |base| element.
  * @param {Element} base the parent element of the controls.
  * @param {string} name the name field of the radiobutton.
- * @param {string} vbalue the value field of the radiobutton.
+ * @param {string} value the value field of the radiobutton.
  * @param {string} labelText the text used for the label.
  * @return {Element} the radiobutton input element.
  */
@@ -163,7 +163,6 @@ function init() {
   const table2 = table1 + 'ABCDEFGHJKLMNPQRSTUVWXYZ123456789';
   const keys = '!#$%&()*+-/<=>?@[]^';
   const table3 = table2 + keys + keys;
-  const table4 = 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんー';
   addPassNode(document.getElementById('passhash'), 3);
   addPassNode(document.getElementById('passparent'), kPassSize);
   addPassNode(document.getElementById('gauge1'), kPassSize);
@@ -172,7 +171,8 @@ function init() {
   addChrChoice('01ab', table1);
   addChrChoice('01aB', table2).checked = true;
   addChrChoice('01aB%', table3);
-  addChrChoice('あ', table4);
+  addChrChoice('あ',
+    'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんー');
   addChrChoice('☀☁', stringFromRange(0x2600, 0x266f));
   addChrChoice('㍍㌠', stringFromRange(0x3300, 0x3357));
   addLengthChoice(8);
@@ -216,9 +216,9 @@ function interval() {
  */
 function calcMain() {
   const form = document.forms[0];
-  const salt = document.getElementById('salt').value;
-  const password = document.getElementById('password').value;
-  const hostname = document.getElementById('host').value;
+  const salt = form.salt.value;
+  const password = form.password.value;
+  const hostname = form.host.value;
   const passHash = hasher(salt, password);
   const table = form.char.value;
   // FF and 䨺 and ꙮ. Anything you don't type.
