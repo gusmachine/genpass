@@ -74,23 +74,46 @@ function updatePass(base, code) {
 }
 
 /**
+ * Adds radiobutton + label control under |base| element.
+ * @param {Element} base the parent element of the controls.
+ * @param {string} name the name field of the radiobutton.
+ * @param {string} vbalue the value field of the radiobutton.
+ * @param {string} labelText the text used for the label.
+ * @return {Element} the radiobutton input element.
+ */
+function addRadioAndLabel(base, name, value, labelText) {
+  let radio = base.appendChild(document.createElement('input'));
+  radio.type = 'radio';
+  radio.name = name;
+  radio.value = value;
+  const id = 'r-' + name + '-' + value;
+  radio.id = id;
+  let el = base.appendChild(document.createElement('label'));
+  el.appendChild(document.createTextNode(labelText));
+  el.htmlFor = id;
+  return radio;
+}
+
+/**
  * Adds character set selection node in the form.
  * @param {string} title the title of th character set.
  * @param {string} table the character set table.
  * @return {Element} the added radio input element for the character set.
  */
 function addChrChoice(title, table) {
-  let base = document.getElementById('chrchoice');
-  let radio = base.appendChild(document.createElement('input'));
-  radio.type = 'radio';
-  radio.name = 'char';
-  radio.value = table;
-  const id = 'r-' + table;
-  radio.id = id;
-  let el = base.appendChild(document.createElement('label'));
-  el.appendChild(document.createTextNode(title));
-  el.htmlFor = id;
-  return radio;
+  return addRadioAndLabel(
+    document.getElementById('chrchoice'), 'char', table, title);
+}
+
+/**
+ * Adds length selection node in the form.
+ * @param {number} length the length choice.
+ * @return {Element} the added radio input element for the size.
+ */
+function addLengthChoice(length) {
+  const lenStr = length.toString();
+  return addRadioAndLabel(
+    document.getElementById('lenBase'), 'length', lenStr, lenStr);
 }
 
 const kPassSize = 30;
@@ -152,6 +175,11 @@ function init() {
   addChrChoice('あ', table4);
   addChrChoice('☀☁', stringFromRange(0x2600, 0x266f));
   addChrChoice('㍍㌠', stringFromRange(0x3300, 0x3357));
+  addLengthChoice(8);
+  addLengthChoice(12);
+  addLengthChoice(16).checked = true;
+  addLengthChoice(20);
+  addLengthChoice(24);
   setInterval(interval, 1000);
 }
 
@@ -175,6 +203,7 @@ function interval() {
     resetCounter -= 1;
     if (resetCounter == 0) {
       updatePass(document.getElementById('passparent'), '*'.repeat(kPassSize));
+      document.getElementById('passbox').value = '';
     }
     document.getElementById('counter').firstChild.data = resetCounter;
   }
@@ -186,11 +215,12 @@ function interval() {
  * @return {boolean} false to stop event propagation.
  */
 function calcMain() {
+  const form = document.forms[0];
   const salt = document.getElementById('salt').value;
   const password = document.getElementById('password').value;
   const hostname = document.getElementById('host').value;
   const passHash = hasher(salt, password);
-  const table = document.forms[0].char.value;
+  const table = form.char.value;
   // FF and 䨺 and ꙮ. Anything you don't type.
   // The character table is also added here. Otherwise passwords made of the
   // same salt/pass/host with different tables are too close to each other.
@@ -199,8 +229,10 @@ function calcMain() {
 
   updatePass(document.getElementById('passhash'),
       passCreator(passHash, '123456789abcdefghijkmnprstuvwxyz', kPassSize));
-  updatePass(document.getElementById('passparent'),
-      passCreator(code2, table, kPassSize));
+  const resultPass = passCreator(code2, table, kPassSize);
+  updatePass(document.getElementById('passparent'), resultPass);
+  document.getElementById('passbox').value =
+    resultPass.substr(0, parseInt(form.length.value));
 
   resetCounter = resetInitial;
   return false;

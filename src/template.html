@@ -8,10 +8,10 @@
   min-width: 80px;
   display: inline-block;
   text-align:right;
-  padding-right: 4px
+  padding-right: 4px;
 }
 
-#chrchoice label {
+.radioset label {
   display: inline-block;
   cursor: pointer;
   user-select: none;
@@ -20,8 +20,8 @@
   margin: 4px;
   background-color: #edeff1;
 }
-#chrchoice input[type=radio] {display: none}
-#chrchoice input[type=radio]:checked + label {background-color: #8ff}
+.radioset input[type=radio] {display: none}
+.radioset input[type=radio]:checked + label {background-color: #8ff}
 
 #fm input[type=button] {
   border-radius: 8px;
@@ -50,6 +50,9 @@ label.on {background-color: #8ff}
 }
 .el:nth-child(5n) {font-weight: bold; background-color: #8ff}
 .hidden .el {color:transparent}
+#passbox {
+  color: transparent;
+}
 </style>
 </head>
 <body>
@@ -63,17 +66,21 @@ label.on {background-color: #8ff}
     </label>
   </div>
   <div>
-    <label for="password">password</label>
+    <label for="password">Password</label>
     <input type="password" name="password" id="password" value="" />
     <span id="passhash"></span>
   </div>
   <div>
-    <label for="host">host</label>
+    <label for="host">Host</label>
     <input type="text" name="host" id="host" value="" />
   </div>
   <div>
     <span class="cap">Char</span>
-    <span id="chrchoice"></span>
+    <span id="chrchoice" class='radioset'></span>
+  </div>
+  <div>
+    <span class="cap">Length</span>
+    <span id="lenBase" class='radioset'></span>
   </div>
   <div>
     <input type="button" value="generate" id="submit"/>
@@ -89,6 +96,9 @@ label.on {background-color: #8ff}
 </div>
 <div id="gauge1"></div>
 <div id="passparent" class="hidden"></div>
+<div>
+  The password is in both ↑ and →
+  <input type="text" id="passbox" /></div>
 <h2>Usage</h2>
 <ol>
   <li>
@@ -120,6 +130,10 @@ label.on {background-color: #8ff}
   <li>
     The password disappears in 20 sec, when the counter reaches 0.
     You can just "generate" again to show it again.
+  </li>
+  <li>
+    The first "length" letters of the password are also in the text box.
+    Use it if it is easier for you to copy the password from it.
   </li>
 </ul>
 <div>
