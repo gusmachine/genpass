@@ -116,7 +116,7 @@ function addLengthChoice(length) {
     document.getElementById('lenBase'), 'length', lenStr, lenStr);
 }
 
-const kPassSize = 30;
+const kPassSize = 25;
 
 /**
  * Returns string starting from unicode CP start and ends with end.
