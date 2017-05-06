@@ -26,3 +26,4 @@ TBA
 - Better UI than copy-paste.
 - Choose better password generation algorithm. Argon2?
 - Generate salt string automatically.
+- Stop embedding sjcl.js.

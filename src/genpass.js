@@ -96,6 +96,20 @@ function addChrChoice(title, table) {
 const kPassSize = 30;
 
 /**
+ * Returns string starting from unicode CP start and ends with end.
+ * @param {number} start the smallest unicode codepoint needed.
+ * @param {number} end the largest unicode codepoint needed.
+ * @return {string}
+ */
+function stringFromRange(start, end) {
+  let r = '';
+  for (let i = start; i <= end; i++) {
+    r += String.fromCharCode(i);
+  }
+  return r;
+}
+
+/**
  * body.onload equivalent.
  */
 function init() {
@@ -136,6 +150,8 @@ function init() {
   addChrChoice('01aB', table2).checked = true;
   addChrChoice('01aB%', table3);
   addChrChoice('あ', table4);
+  addChrChoice('☀☁', stringFromRange(0x2600, 0x266f));
+  addChrChoice('㍍㌠', stringFromRange(0x3300, 0x3357));
   setInterval(interval, 1000);
 }
 
