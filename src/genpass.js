@@ -65,7 +65,6 @@ function stringToUint8(str) {
 function hasherPromise(salt, pass) {
   // Use Web Crypto API to calculate PBKDF2-sha256.
   // Pointer: https://github.com/diafygi/webcrypto-examples#pbkdf2
-  // TODO: Polyfill for Safari (webkitSubtle).
   return window.crypto.subtle.importKey(
     'raw',
     stringToUint8(pass),
@@ -199,6 +198,15 @@ function init() {
   });
   document.getElementById('salt').value = s;
 
+  // For Safari.
+  // Doesn't work on Safari yet, though. It raises NotSupportedError for the
+  // following.
+  // q = window.crypto.webkitSubtle.importKey(
+  //     'raw', new Uint8Array([8]), {name: 'PBKDF2'}, false, ['deriveBits']);
+  if (window.crypto && !window.crypto.subtle && window.crypto.webkitSubtle) {
+    window.crypto.subtle = window.crypto.webkitSubtle;
+  }
+
   const table0 = '0123456789';
   const table1 = '123456789abcdefghijkmnprstuvwxyz';
   const table2 = table1 + 'ABCDEFGHJKLMNPQRSTUVWXYZ123456789';
@@ -256,6 +264,7 @@ function interval() {
  * @return {boolean} false to stop event propagation.
  */
 function calcMain() {
+  const start = performance.now();
   const form = document.forms[0];
   const salt = form.salt.value;
   const password = form.password.value;
@@ -277,6 +286,8 @@ function calcMain() {
     updatePass(document.getElementById('passparent'), resultPass);
     document.getElementById('passbox').value =
       resultPass.substr(0, parseInt(form.length.value));
+    const now = performance.now();
+    console.log('calculated in ' + (now - start) + ' ms');
   });
   resetCounter = resetInitial;
   return false;
