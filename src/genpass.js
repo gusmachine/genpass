@@ -1,33 +1,40 @@
-import {bitArray, misc} from './sjcl.js';
 /**
- * Cuts a bitArray into an array of n-bit integers.
- * @param {bitArray} ba the bitArray to cut.
+ * Cuts a Uint8Array into an array of n-bit integers.
+ * @param {Uint8Array} ua the Uint8Array to cut.
  * @param {number} bits the number of bits used for each result element.
  * @return {Array<number>}
  */
-function cutByBits(ba, bits) {
+function cutUint8(ua, bits) {
   let result = [];
-  const len = bitArray.bitLength(ba);
-  for (let i = 0; i + bits < len; i += bits) {
-    const val = bitArray.extract(ba, i, bits);
+  for (let i = 0; i + bits < ua.length * 8; i += bits) {
+    const pos = Math.floor(i / 8);
+    const rem = i - pos * 8;
+    // Take 16 bits from ua[pos].
+    let val = ua[pos] << 8;
+    if (pos + 1 < ua.length) {
+      val |= ua[pos + 1];
+    }
+    // Take rem ~ rem+bits bits from val.
+    val >>= 16 - (rem + bits);
+    val &= (1<<bits) - 1;
     result.push(val);
   }
   return result;
 }
 
 /**
- * Converts a bitArray into a passcode of specific length consisting of the
+ * Converts a Uint8Array into a passcode of specific length consisting of the
  * given charset. This needs length * log2(charset.length) * 2 bits of
- * bytearray on average. The result can be shorter than |length| in case if
- * |ba.length| is not sufficient.
- * @param {bitArray} ba the bitArray to convert.
+ * Uint8Array on average. The result can be shorter than |length| in case if
+ * |ua.length*8| is not sufficient.
+ * @param {Uint8Array} ua the bitArray to convert.
  * @param {string} charset the list of characters used for the result.
  * @param {number} length the expected output string size.
  * @return {string}
  */
-function passCreator(ba, charset, length) {
+function passCreator(ua, charset, length) {
   const sigma = charset.length;
-  const bitsArray = cutByBits(ba, Math.ceil(Math.log2(sigma)));
+  const bitsArray = cutUint8(ua, Math.ceil(Math.log2(sigma)));
   let result = '';
   for (let i = 0; result.length < length && i < bitsArray.length; i ++) {
     if (bitsArray[i] < sigma) {
@@ -38,13 +45,43 @@ function passCreator(ba, charset, length) {
 }
 
 /**
+ * Converts unicode string into Uint8Array of utf-8.
+ * @param {string} str the string to convert.
+ * @return {Uint8Array} the converted str.
+ */
+function stringToUint8(str) {
+  let charList = unescape(encodeURIComponent(str)).split('').map(function(c) {
+    return c.charCodeAt(0);
+  });
+  return new Uint8Array(charList);
+}
+
+/**
  * The hash function used for this program.
  * @param {string} salt the salt string.
  * @param {string} pass the password.
- * @return {bitArray} hash result bitArray. Use passCreator to take string.
+ * @return {Promise} Promise that returns Uint8Array.
  */
-function hasher(salt, pass) {
-  return misc.pbkdf2(pass, salt, 6000, 1024);
+function hasherPromise(salt, pass) {
+  return window.crypto.subtle.importKey(
+    'raw',
+    stringToUint8(pass),
+    {name: 'PBKDF2'},
+    false,
+    ['deriveBits']).then(function(key) {
+      return window.crypto.subtle.deriveBits(
+        {
+          name: 'PBKDF2',
+          salt: stringToUint8(salt),
+          iterations: 6000,
+          hash: {name: 'SHA-256'},
+        },
+        key,
+        1024
+      );
+    }).then(function(bits) {
+      return new Uint8Array(bits);
+    });
 }
 
 /**
@@ -219,21 +256,24 @@ function calcMain() {
   const salt = form.salt.value;
   const password = form.password.value;
   const hostname = form.host.value;
-  const passHash = hasher(salt, password);
+  const passHashP = hasherPromise(salt, password);
   const table = form.char.value;
   // FF and 䨺 and ꙮ. Anything you don't type.
   // The character table is also added here. Otherwise passwords made of the
   // same salt/pass/host with different tables are too close to each other.
   const pass = password + '\f\u4A3A' + hostname + '\f\uA66E' + table;
-  const code2 = hasher(salt, pass);
+  const code2P = hasherPromise(salt, pass);
 
-  updatePass(document.getElementById('passhash'),
-      passCreator(passHash, '123456789abcdefghijkmnprstuvwxyz', kPassSize));
-  const resultPass = passCreator(code2, table, kPassSize);
-  updatePass(document.getElementById('passparent'), resultPass);
-  document.getElementById('passbox').value =
-    resultPass.substr(0, parseInt(form.length.value));
-
+  passHashP.then(function(hash) {
+    updatePass(document.getElementById('passhash'),
+        passCreator(hash, '123456789abcdefghijkmnprstuvwxyz', kPassSize));
+  });
+  code2P.then(function(code) {
+    const resultPass = passCreator(code, table, kPassSize);
+    updatePass(document.getElementById('passparent'), resultPass);
+    document.getElementById('passbox').value =
+      resultPass.substr(0, parseInt(form.length.value));
+  });
   resetCounter = resetInitial;
   return false;
 }
