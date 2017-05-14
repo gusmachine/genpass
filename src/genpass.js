@@ -63,12 +63,16 @@ function stringToUint8(str) {
  * @return {Promise} Promise that returns Uint8Array.
  */
 function hasherPromise(salt, pass) {
+  // Use Web Crypto API to calculate PBKDF2-sha256.
+  // Pointer: https://github.com/diafygi/webcrypto-examples#pbkdf2
+  // TODO: Polyfill for Safari (webkitSubtle).
   return window.crypto.subtle.importKey(
     'raw',
     stringToUint8(pass),
     {name: 'PBKDF2'},
     false,
-    ['deriveBits']).then(function(key) {
+    ['deriveBits'])
+    .then(function(key) {
       return window.crypto.subtle.deriveBits(
         {
           name: 'PBKDF2',
