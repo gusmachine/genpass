@@ -22,5 +22,5 @@ TBA
 ## TODOes
 - Clarify what libraries are used.
 - Better UI than copy-paste.
-- Choose better password generation algorithm. Argon2?
+- Choose better password generation algorithm. [Argon2](https://github.com/antelle/argon2-browser)?
 - Generate salt string automatically.
