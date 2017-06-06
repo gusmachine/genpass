@@ -1,3 +1,5 @@
+const scryptAsync = require('scrypt-async');
+
 /**
  * Cuts a Uint8Array into an array of n-bit integers.
  * @param {Uint8Array} ua the Uint8Array to cut.
@@ -45,46 +47,23 @@ function passCreator(ua, charset, length) {
 }
 
 /**
- * Converts unicode string into Uint8Array of utf-8.
- * @param {string} str the string to convert.
- * @return {Uint8Array} the converted str.
- */
-function stringToUint8(str) {
-  let charList = unescape(encodeURIComponent(str)).split('').map(function(c) {
-    return c.charCodeAt(0);
-  });
-  return new Uint8Array(charList);
-}
-
-/**
  * The hash function used for this program.
  * @param {string} salt the salt string.
  * @param {string} pass the password.
  * @return {Promise} Promise that returns Uint8Array.
  */
 function hasherPromise(salt, pass) {
-  // Use Web Crypto API to calculate PBKDF2-sha256.
-  // Pointer: https://github.com/diafygi/webcrypto-examples#pbkdf2
-  return window.crypto.subtle.importKey(
-    'raw',
-    stringToUint8(pass),
-    {name: 'PBKDF2'},
-    false,
-    ['deriveBits'])
-    .then(function(key) {
-      return window.crypto.subtle.deriveBits(
-        {
-          name: 'PBKDF2',
-          salt: stringToUint8(salt),
-          iterations: 6000,
-          hash: {name: 'SHA-256'},
-        },
-        key,
-        1024
-      );
-    }).then(function(bits) {
-      return new Uint8Array(bits);
+  return new Promise(function(resolve, reject) {
+    scryptAsync(pass, salt, {
+      N: 16384,
+      r: 8,
+      p: 1,
+      dkLen: 128,
+      encoding: 'binary',
+    }, function(derivedKey) {
+      resolve(derivedKey);
     });
+  });
 }
 
 /**
