@@ -54,11 +54,14 @@ function passCreator(ua, charset, length) {
  */
 function hasherPromise(salt, pass) {
   return new Promise(function(resolve, reject) {
+    // https://stackoverflow.com/questions/11126315/what-are-optimal-scrypt-work-factors
+    // But reduced N by 2.
+    // It takes 12 sec with N=2^20, 5 sec with N=2^18,19, on Mac Mini + Chrome.
     scryptAsync(pass, salt, {
-      N: 16384,
+      N: 1<<18,
       r: 8,
       p: 1,
-      dkLen: 128,
+      dkLen: 128,  // 1024 bits.
       encoding: 'binary',
     }, function(derivedKey) {
       resolve(derivedKey);
