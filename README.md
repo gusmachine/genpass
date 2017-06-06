@@ -5,7 +5,7 @@ A password generator implemented in JS/HTML.
 ## Features
 - Generates host-specific passwords from a master password.
 - No network connection is needed. Everything is calculated within the browser.
-- Secure password generation using pbkdf2-sha256 with 6,000 iterations.
+- Secure password generation using scrypt with N=2^18. (N=2^20 took too long time)
 - Several character sets to choose from to meet the password requirements.
 - Passwords in invisible text to avoid shoulder hacking. You can still copy-paste.
 

@@ -57,6 +57,7 @@ function hasherPromise(salt, pass) {
     // https://stackoverflow.com/questions/11126315/what-are-optimal-scrypt-work-factors
     // But reduced N by 2.
     // It takes 12 sec with N=2^20, 5 sec with N=2^18,19, on Mac Mini + Chrome.
+    // It takes 7 sec on Nexus 6P chrome, 15 sec on iPhone 6 Safari with N=2^18.
     scryptAsync(pass, salt, {
       N: 1<<18,
       r: 8,
