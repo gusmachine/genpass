@@ -287,7 +287,7 @@ function calcMain() {
     document.getElementById('passbox').value =
       resultPass.substr(0, parseInt(form.length.value));
     const now = performance.now();
-    console.log('calculated in ' + (now - start) + ' ms');
+    document.getElementById('dur').firstChild.data = Math.floor(now - start);
   });
   resetCounter = resetInitial;
   return false;
