@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
   entry: './src/genpass.js',
@@ -19,24 +20,27 @@ module.exports = {
         removeComments: true,
       },
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      minimize: true,
-      sourceMap: false,
-      compressor: {
-        dead_code: true,
-        unused: true,
-        warnings: true,
-      },
-      output: {
-        comments: false,
-      },
-    }),
   ],
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        sourceMap: false,
+        uglifyOptions: {
+          compress: {
+            warnings: true,
+          },
+          output: {
+            comments: false,
+          },
+        },
+      }),
+    ],
+  },
   module: {
     rules: [
       {
         test: /\.js$/,
-        exclude: /(node_modules|sjcl)/,
+        exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
@@ -46,4 +50,5 @@ module.exports = {
       },
     ],
   },
+  mode: 'production',
 };

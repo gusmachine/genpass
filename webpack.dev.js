@@ -25,7 +25,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        exclude: /(node_modules|sjcl)/,
+        exclude: /node_modules)/,
         use: {
           loader: 'babel-loader',
           options: {
@@ -35,4 +35,5 @@ module.exports = {
       },
     ],
   },
+  mode: 'development',
 };
